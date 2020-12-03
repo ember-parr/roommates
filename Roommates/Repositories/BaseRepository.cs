@@ -111,8 +111,50 @@ namespace Roommates.Repositories
         }
 
 
+        public List<Roommate> GetAllRoommates()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Roommate.Id, FirstName, LastName, RentPortion, MoveInDate, Name FROM Roommate JOIN Room r ON Roommate.RoomId = r.Id";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<Roommate> roommates = new List<Roommate>();
 
+                    while (reader.Read())
+                    {
+                        int idColumnPosition = reader.GetOrdinal("Id");
+                        int idValue = reader.GetInt32(idColumnPosition);
 
+                        int firstNameColumnPosition = reader.GetOrdinal("FirstName");
+                        string firstNameValue = reader.GetString(firstNameColumnPosition);
+
+                        int lastNameColumnPosition = reader.GetOrdinal("LastName");
+                        string lastNameValue = reader.GetString(lastNameColumnPosition);
+
+                        int rentPortionPosition = reader.GetOrdinal("RentPortion");
+                        int rentPortionValue = reader.GetInt32(rentPortionPosition);
+
+                        int roomIdPosition = reader.GetOrdinal("Name");
+                        string roomIdValue = reader.GetString(roomIdPosition);
+
+                        Roommate roommate = new Roommate
+                        {
+                            Id = idValue,
+                            FirstName = firstNameValue,
+                            LastName = lastNameValue,
+                            RentPortion = rentPortionValue,
+                            RoomId = roomIdValue
+                        };
+                        roommates.Add(roommate);
+                    }
+
+                    reader.Close();
+                    return roommates;
+                }
+            }
+        }
 
 
 
