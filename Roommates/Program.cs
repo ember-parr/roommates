@@ -95,13 +95,25 @@ namespace Roommates
                         List<Roommate> roommates = roommateRepo.GetAllRoommates();
                         foreach(Roommate r in roommates)
                         {
-                            Console.WriteLine($"{r.FirstName} pays {r.RentPortion}% of the rent & lives in the {r.RoomId}");
+                            Console.WriteLine($"{r.Id} - {r.FirstName} pays {r.RentPortion}% of the rent & lives in the {r.RoomId}");
                         }
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
                     case ("Search for roommates"):
-                        Console.WriteLine("searcing..... nerp");
+                        Console.Write("Search roommate by Id: ");
+                        int roomieId = int.Parse(Console.ReadLine());
+                        Roommate roomie = roommateRepo.GetById(roomieId);
+                        Console.WriteLine($"{roomie.Id} - {roomie.FirstName} pays {roomie.RentPortion}% of the rent & lives in the {roomie.RoomId}");
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+                    case ("Show unassigned chores"):
+                        List<Chore> unassignedChores = choreRepo.GetUnassignedChores();
+                        foreach(Chore c in unassignedChores)
+                        {
+                            Console.WriteLine($"{c.Id} - {c.Name}");
+                        }
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
@@ -127,6 +139,7 @@ namespace Roommates
             "Add a chore",
             "Show all roommates",
             "Search for roommates",
+            "Show unassigned chores",
             "Exit"
             };
 

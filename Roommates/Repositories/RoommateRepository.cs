@@ -25,7 +25,7 @@ namespace Roommates.Repositories
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT FirstName, LastName, RentPortion, MoveInDate, Name FROM Roommate WHERE Id = @id JOIN Room r ON Roommate.RoomId = r.Id";
+                    cmd.CommandText = "SELECT FirstName, LastName, RentPortion, MoveInDate, Name FROM Roommate JOIN Room r ON Roommate.RoomId = r.Id  WHERE Roommate.Id = @id";
                     cmd.Parameters.AddWithValue("@id", id);
                     SqlDataReader reader = cmd.ExecuteReader();
 
