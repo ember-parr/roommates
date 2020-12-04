@@ -10,6 +10,7 @@ namespace Roommates.Repositories
     {
         public ChoreRepository(string connectionString) : base(connectionString) { }
 
+        // gets a chore by it's id number
         public Chore GetById(int id)
         {
             using (SqlConnection conn = Connection)
@@ -39,7 +40,7 @@ namespace Roommates.Repositories
             }
         }
 
-
+        // adds a new chore to the database
         public void Insert(Chore chore)
         {
             using (SqlConnection conn = Connection)
@@ -58,7 +59,7 @@ namespace Roommates.Repositories
             }
         }
 
-
+        // assigns chores to a roommate & gives confirmation message
         public void AssignChore(int RoommateId, int ChoreId)
         {
             using (SqlConnection conn = Connection)
@@ -80,13 +81,7 @@ namespace Roommates.Repositories
 
         }
 
-
-       
-
-
-
-
-
+        // gathers all chores that are not yet assigned to a roommate
         public List<Chore> GetUnassignedChores()
         {
             using (SqlConnection conn = Connection)
@@ -116,6 +111,48 @@ namespace Roommates.Repositories
                     }
                     reader.Close();
                     return chores;
+                }
+            }
+        }
+
+
+        public List<string> GetChoreCounts()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT COUNT (DISTINCT rc.ChoreId) as chores, r.FirstName
+                                        FROM RoommateChore rc
+                                        JOIN Chore c ON rc.ChoreId = c.Id
+                                        JOIN Roommate r ON rc.RoommateId = r.Id
+                                        GROUP BY r.FirstName";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<string> choreCounts = new List<string>();
+
+                    while (reader.Read())
+                    {
+                        int roommateColumnPosition = reader.GetOrdinal("FirstName");
+                        string roommateValue = reader.GetString(roommateColumnPosition);
+                        int choreColumnPosition = reader.GetOrdinal("chores");
+                        int choreValue = reader.GetInt32(choreColumnPosition);
+
+                        if (choreValue == 1)
+                        {
+                            string choreCount = $"- {roommateValue} is assigned {choreValue} chore";
+                            choreCounts.Add(choreCount);
+                        } else
+                        {
+                            string choreCount = $"- {roommateValue} is assigned {choreValue} chores";
+                            choreCounts.Add(choreCount);
+                        }
+                        
+
+                    }
+
+                    reader.Close();
+                    return choreCounts;
                 }
             }
         }

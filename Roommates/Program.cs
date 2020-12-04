@@ -124,6 +124,15 @@ namespace Roommates
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
+                    case ("Show chore counts"):
+                        List<string> choreCounts = choreRepo.GetChoreCounts();
+                        foreach(string c in choreCounts)
+                        {
+                            Console.WriteLine(c);
+                        }
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
                      case ("Exit"):
                          runProgram = false;
                          break;
@@ -146,6 +155,7 @@ namespace Roommates
             "Add a chore",
             "Show unassigned chores",
             "Assign a chore",
+            "Show chore counts",
             "Exit"
             };
 
