@@ -1,6 +1,7 @@
 using Microsoft.Data.SqlClient;
 using Roommates.Models;
 using System.Collections.Generic;
+using System;
 
 
 namespace Roommates.Repositories
@@ -58,32 +59,29 @@ namespace Roommates.Repositories
         }
 
 
-//        public Chore GetUnassignedChores()
-//        {
-//            using (SqlConnection conn = Connection)
-//            {
-//                conn.Open();
-//                using (SqlCommand cmd = conn.CreateCommand())
-//                {
-//                    cmd.CommandText = "SELECT Name FROM Chore FULL OUTER JOIN RoommateChore rc ON Chore.Id = rc.ChoreId WHERE RoommateId IS NULL ";
-                    
-//                    SqlDataReader reader = cmd.ExecuteReader();
+        public void AssignChore(int RoommateId, int ChoreId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @" INSERT INTO RoommateChore (RoommateId, ChoreId)
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@RoommateId, @ChoreId)";
+                    cmd.Parameters.AddWithValue("@RoommateId", RoommateId);
+                    cmd.Parameters.AddWithValue("@ChoreId", ChoreId);
+                    int id = (int)cmd.ExecuteScalar();
 
-//        Chore chore = null;
-//                    if (reader.Read())
-//                    {
-//                        chore = new Chore 
-//                        {
-//                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-//                            Name = reader.GetString(reader.GetOrdinal("Name"))
-//                        };
-//}
+                    Chore thisChore = GetById(id);
+                    Console.WriteLine($"{thisChore.Name} has been assigned.");
+                }
+            }
 
-//reader.Close();
-//return chore;
-//                }
-//            }
-//        }
+        }
+
+
+       
 
 
 
