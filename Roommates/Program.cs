@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Roommates.Repositories;
 using Roommates.Models;
+using System.IO;
+using System.Linq;
 
 
 namespace Roommates
@@ -17,6 +19,7 @@ namespace Roommates
             RoomRepository roomRepo = new RoomRepository(CONNECTION_STRING);
             ChoreRepository choreRepo = new ChoreRepository(CONNECTION_STRING);
             RoommateRepository roommateRepo = new RoommateRepository(CONNECTION_STRING);
+            
             bool runProgram = true;
             while (runProgram)
              {
@@ -133,6 +136,29 @@ namespace Roommates
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
+                    case ("Update a room"):
+                        List<Room> roomOptions = roomRepo.GetAllRooms();
+                        foreach (Room r in roomOptions)
+                        {
+                            Console.WriteLine($"{r.Id} - {r.Name} Max Occupancy({r.MaxOccupancy})");
+                        }
+
+                        Console.Write("Which room would you like to update? ");
+                        int selectedRoomId = int.Parse(Console.ReadLine());
+                        Room selectedRoom = roomOptions.FirstOrDefault(r => r.Id == selectedRoomId);
+
+                        Console.Write("New Name: ");
+                        selectedRoom.Name = Console.ReadLine();
+
+                        Console.Write("New Max Occupancy: ");
+                        selectedRoom.MaxOccupancy = int.Parse(Console.ReadLine());
+
+                        roomRepo.Update(selectedRoom);
+
+                        Console.WriteLine($"Room has been successfully updated");
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
                      case ("Exit"):
                          runProgram = false;
                          break;
@@ -156,6 +182,7 @@ namespace Roommates
             "Show unassigned chores",
             "Assign a chore",
             "Show chore counts",
+            "Update a room",
             "Exit"
             };
 
